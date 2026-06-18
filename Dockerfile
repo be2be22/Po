@@ -1,18 +1,23 @@
-FROM alpine:latest
-
-RUN apk add --no-cache git build-base
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# دانلود و کامپایل پروکسی تلگرام (نسخه سبک و سریع)
-RUN git clone https://github.com/alexbers/mtprotoproxy.git . && \
-    make
+# نصب پیش‌نیازهای کامپایل و اجرای پایتون
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git gcc python3-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# تنظیمات پروکسی (یوزرنیم و سکرت)
-# سکرت باید ۳۲ کاراکتر هگزادسیمال باشد
-ENV PORT=443
-ENV SECRET=00112233445566778899aabbccddeeff
-ENV USERS={"tg_user": "00112233445566778899aabbccddeeff"}
+# نصب کتابخانه uvloop برای سرعت بالا در پایتون
+RUN pip install --no-cache-dir uvloop
+
+# دانلود پروژه
+RUN git clone https://github.com/alexbers/mtprotoproxy.git .
+
+# ساخت فایل کانفیگ مستقیماً در کانتینر (جلوگیری از خطای داکر)
+RUN echo 'PORT = 443' > config.py && \
+    echo 'USERS = {"tg_user": "00112233445566778899aabbccddeeff"}' >> config.py
+
+EXPOSE 443
 
 # اجرای پروکسی
 CMD ["python3", "mtprotoproxy.py"]
