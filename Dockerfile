@@ -13,7 +13,7 @@ RUN git clone https://github.com/alexbers/mtprotoproxy.git .
 RUN echo 'PORT = 443' > config.py && \
     echo 'USERS = {"tg_user": "00112233445566778899aabbccddeeff"}' >> config.py && \
     echo 'TLS_DOMAIN = "speedtest.net"' >> config.py && \
-    echo 'AD_TAG = bytes.fromhex("8a47d80dc25ea4eaf8d662c69337a7ce")' >> config.py
+    echo 'AD_TAG = "8a47d80dc25ea4eaf8d662c69337a7ce"' >> config.py
 
 EXPOSE 443
 
